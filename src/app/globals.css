@@ -100,3 +100,23 @@ button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
+
+/* Bottom sheet: a native <dialog>, so focus is trapped and Escape closes it for free. */
+dialog.sheet {
+  margin: auto auto 0;
+  width: 100%;
+  max-width: 40rem;
+  max-height: 94dvh;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-bottom: 0;
+  border-radius: 18px 18px 0 0;
+  background: var(--surface);
+  color: var(--text);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+dialog.sheet::backdrop { background: rgb(0 0 0 / 0.5); }
+@media (min-width: 640px) {
+  dialog.sheet { margin: auto; border-bottom: 1px solid var(--border); border-radius: 18px; max-height: 90dvh; }
+}
