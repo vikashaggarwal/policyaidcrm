@@ -266,16 +266,43 @@ describe("manager and admin powers", () => {
     expect(a.rows[0].actor_id).toBe(ADMIN);
   });
 
-  it("uploads are audited and only staff can record them", async () => {
+  it("uploads are audited with the real count, and only staff can run them", async () => {
     await run(CALLER1, async () => {
+      await expect(q("select public.begin_upload('x.csv', 10)")).rejects.toThrow(/not_allowed/);
       await expect(
         q("insert into public.upload_batches (uploaded_by, filename) values ($1, 'x.csv')", [CALLER1]),
       ).rejects.toThrow();
     });
+
+    let batch = "";
     await run(MANAGER, async () => {
-      await q("insert into public.upload_batches (uploaded_by, filename, total_rows, added) values ($1, 'x.csv', 10, 8)", [MANAGER]);
+      batch = (await q("select public.begin_upload('x.csv', 10) as id")).rows[0].id as string;
     });
-    const a = await q("select actor_id from public.audit_log where action = 'upload'");
+    await q("insert into public.leads (reg_no, name, phone, batch_id) values ('MH01UP0001','x','9800000151',$1), ('MH01UP0002','x','9800000152',$1)", [batch]);
+
+    await run(CALLER1, async () => {
+      await expect(q("select public.finish_upload($1, 0, 0)", [batch])).rejects.toThrow(/not_allowed/);
+    });
+    await run(MANAGER, async () => {
+      // the browser claims nothing about "added": the database counts it
+      const r = await q("select * from public.finish_upload($1, 3, 5)", [batch]);
+      expect(r.rows[0]).toMatchObject({ added: 2, duplicates: 3, invalid: 5, total_rows: 10 });
+      await expect(q("select public.finish_upload($1, 0, 0)", [batch])).rejects.toThrow(/already_finished/);
+    });
+    const a = await q("select actor_id, details from public.audit_log where action = 'upload'");
+    expect(a.rows).toHaveLength(1);
     expect(a.rows[0].actor_id).toBe(MANAGER);
+    expect((a.rows[0].details as { added: number }).added).toBe(2);
+  });
+
+  it("existing_reg_nos finds duplicates for staff, and only a caller's own for callers", async () => {
+    await run(MANAGER, async () => {
+      const r = await q("select * from public.existing_reg_nos($1)", [["MH01AA0004", "MH01AA0005", "NOPE0001"]]);
+      expect(r.rows.map((x) => Object.values(x)[0]).sort()).toEqual(["MH01AA0004", "MH01AA0005"]);
+    });
+    await run(CALLER1, async () => {
+      const r = await q("select * from public.existing_reg_nos($1)", [["MH01AA0004", "MH01AA0005"]]);
+      expect(r.rows).toHaveLength(0); // someone else's / unassigned leads stay invisible
+    });
   });
 });
