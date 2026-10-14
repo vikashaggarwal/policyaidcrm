@@ -1,5 +1,4 @@
 import { requireProfile } from "@/lib/auth";
-import { isStaff } from "@/lib/types";
 import { signOut } from "./actions";
 import { NavLinks } from "./nav-links";
 
@@ -11,7 +10,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       ? [{ href: "/queue", label: "Queue" }]
       : [
           { href: "/dashboard", label: "Dashboard" },
-          ...(isStaff(profile.role) ? [{ href: "/leads", label: "Leads" }] : []),
+          { href: "/leads", label: "Leads" },
+          { href: "/audit", label: "Audit" },
           ...(profile.role === "admin" ? [{ href: "/admin/users", label: "Users" }] : []),
         ];
 

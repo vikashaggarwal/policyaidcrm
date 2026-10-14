@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { analyseLocally, applyExisting, countRows, invalidRowsCsv, type AnalysedRow } from "@/lib/upload/analyse";
-import { resolveAssignee, type CallerRef } from "@/lib/upload/assignee";
+import { analyseLocally, applyExisting, countRows, invalidRowsCsv, summariseAssignments, type AnalysedRow } from "@/lib/upload/analyse";
+import type { CallerRef } from "@/lib/upload/assignee";
 import { FIELD_LABELS, LEAD_FIELDS, type HeaderMapping } from "@/lib/upload/headers";
 import { CHUNK_SIZE, mapRows, readFile, readPasted, UploadError, type Table } from "@/lib/upload/parse";
 import { beginUpload, findExisting, finishUpload, importChunk } from "./actions";
@@ -170,9 +170,7 @@ export function UploadClient({ callers }: { callers: CallerRef[] }) {
   }, [rows, source]);
 
   const counts = countRows(rows);
-  const unmatchedAssignees = rows.filter(
-    (r) => r.status === "new" && r.lead?.assignee_text && !resolveAssignee(r.lead.assignee_text, callers),
-  ).length;
+  const assignments = summariseAssignments(rows, callers);
 
   // ---------------------------------------------------------------- start
   if (stage === "start" || stage === "reading") {
@@ -317,12 +315,49 @@ export function UploadClient({ callers }: { callers: CallerRef[] }) {
         <p className="mt-3 text-sm text-muted">
           Duplicates are leads already in the system, or repeated in this file (matched on registration number). They won&apos;t be imported.
         </p>
-        {unmatchedAssignees > 0 && (
-          <p className="mt-2 rounded-lg bg-warn-bg px-3 py-2 text-sm">
-            {unmatchedAssignees.toLocaleString("en-IN")} new leads name a caller we couldn&apos;t match. They&apos;ll be imported unassigned.
-          </p>
-        )}
       </section>
+
+      {counts.new > 0 && (
+        <section aria-labelledby="assign-h" className="card space-y-3 p-4">
+          <h2 id="assign-h" className="font-semibold">Who gets these leads</h2>
+          {assignments.perCaller.length === 0 && assignments.unmatched.length === 0 ? (
+            <p className="text-sm text-muted">
+              The sheet has no &ldquo;Assigned to&rdquo; values, so all {counts.new.toLocaleString("en-IN")} new leads will be unassigned.
+              You can assign them afterwards from the Leads page.
+            </p>
+          ) : (
+            <ul className="space-y-1 text-sm">
+              {assignments.perCaller.map((c) => (
+                <li key={c.id} className="flex justify-between gap-3">
+                  <span className="truncate">{c.name}</span>
+                  <span className="font-medium">{c.count.toLocaleString("en-IN")}</span>
+                </li>
+              ))}
+              {assignments.unassignedBlank > 0 && (
+                <li className="flex justify-between gap-3 text-muted">
+                  <span>Unassigned (blank in the sheet)</span>
+                  <span className="font-medium">{assignments.unassignedBlank.toLocaleString("en-IN")}</span>
+                </li>
+              )}
+            </ul>
+          )}
+          {assignments.unmatched.length > 0 && (
+            <div role="alert" className="rounded-lg bg-warn-bg px-3 py-2 text-sm">
+              <p className="font-medium">
+                {assignments.unmatchedTotal.toLocaleString("en-IN")} {assignments.unmatchedTotal === 1 ? "lead names" : "leads name"} someone we couldn&apos;t match. They&apos;ll import unassigned.
+              </p>
+              <ul className="mt-1 space-y-0.5">
+                {assignments.unmatched.slice(0, 8).map((u) => (
+                  <li key={u.text}>&ldquo;{u.text}&rdquo; ×{u.count.toLocaleString("en-IN")}</li>
+                ))}
+              </ul>
+              <p className="mt-1 text-muted">
+                Use a caller&apos;s exact full name or login ID. If a name is wrong, press &ldquo;Choose a different file&rdquo;, fix the sheet and upload again.
+              </p>
+            </div>
+          )}
+        </section>
+      )}
 
       {mapping && table && (
         <details className="card p-4">

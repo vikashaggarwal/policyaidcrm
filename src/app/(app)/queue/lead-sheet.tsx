@@ -104,7 +104,7 @@ export function LeadSheet({
         <div className="min-w-0">
           <h2 id="sheet-title" className="truncate text-lg font-bold">{row.name}</h2>
           <p className="break-words text-sm text-muted">
-            {[row.vehicle_make, row.vehicle_model].filter(Boolean).join(" ")} · {row.reg_no}
+            {[row.vehicle_make, row.vehicle_model, row.reg_no].filter(Boolean).join(" · ") || "No vehicle details yet"}
           </p>
         </div>
         <button type="button" className="btn !min-h-11 shrink-0 !px-4" onClick={() => dialog.current?.close()}>Close</button>
@@ -132,7 +132,7 @@ export function LeadSheet({
               </summary>
               <ul className="mb-1 space-y-1">
                 {data.others.map((o) => (
-                  <li key={o.reg_no}>{[o.vehicle_make, o.vehicle_model].filter(Boolean).join(" ") || "Vehicle"} · {o.reg_no} · {STATUS_LABEL[o.status]}</li>
+                  <li key={`${o.reg_no}-${o.vehicle_model}`}>{[o.vehicle_make, o.vehicle_model].filter(Boolean).join(" ") || "Vehicle"}{o.reg_no ? ` · ${o.reg_no}` : ""} · {STATUS_LABEL[o.status]}</li>
                 ))}
               </ul>
               <p className="text-muted">Mention them on this call rather than ringing again.</p>

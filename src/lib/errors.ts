@@ -12,6 +12,13 @@ const MESSAGES: Record<string, string> = {
   invalid_upload: "That upload isn't valid. Check the file and try again.",
   already_finished: "This upload was already completed. Start a new upload.",
   dnd_locked: "Do-not-call can only be lifted by an admin.",
+  name_required: "Enter the person's name.",
+  invalid_phone: "Enter a valid 10-digit mobile number (starting with 6, 7, 8 or 9).",
+  invalid_reg_no: "That registration number doesn't look right. Use 4–15 letters and digits.",
+  invalid_date: "That registration date isn't valid. Use DD/MM/YYYY.",
+  duplicate_phone: "This mobile number is already in the system. Search for it in your queue, or add a registration number if it's a different vehicle.",
+  duplicate_vehicle: "That registration number is already in the system.",
+  invalid_export: "That export isn't available.",
   append_only: "Call history can't be changed.",
 };
 

@@ -7,6 +7,7 @@ import {
 } from "@/lib/queue-types";
 import { describeCallback } from "@/lib/time";
 import { fetchCounts, fetchQueue } from "./api";
+import { AddLeadSheet } from "./add-lead-sheet";
 import { LeadSheet } from "./lead-sheet";
 
 const EMPTY_TEXT: Record<QueueFilter, [string, string]> = {
@@ -32,6 +33,7 @@ export function QueueClient({
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(initialError);
   const [selected, setSelected] = useState<QueueRow | null>(null);
+  const [adding, setAdding] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const firstRun = useRef(true);
   const requestId = useRef(0);
@@ -94,12 +96,15 @@ export function QueueClient({
 
   return (
     <div className="space-y-4">
-      <div>
-        <label htmlFor="q" className="sr-only">Search leads</label>
-        <input
-          id="q" type="search" inputMode="search" className="field" placeholder="Search name, number, city or reg. no."
-          value={searchInput} onChange={(e) => setSearchInput(e.target.value)} autoComplete="off" maxLength={60}
-        />
+      <div className="flex gap-2">
+        <div className="min-w-0 flex-1">
+          <label htmlFor="q" className="sr-only">Search leads</label>
+          <input
+            id="q" type="search" inputMode="search" className="field" placeholder="Search name, number, city…"
+            value={searchInput} onChange={(e) => setSearchInput(e.target.value)} autoComplete="off" maxLength={60}
+          />
+        </div>
+        <button type="button" className="btn btn-primary shrink-0" onClick={() => setAdding(true)}>+ Add lead</button>
       </div>
 
       <div role="group" aria-label="Filter leads" className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1">
@@ -161,6 +166,18 @@ export function QueueClient({
         </div>
       )}
 
+      {adding && (
+        <AddLeadSheet
+          onClose={() => setAdding(false)}
+          onAdded={(lead) => {
+            setAdding(false);
+            setToast(`Added ${lead.name}. It's in your queue.`);
+            void reload(filter, search, rows.length, false);
+            setSelected(lead); // open it straight away so the call can be logged
+          }}
+        />
+      )}
+
       {selected && (
         <LeadSheet
           row={selected}
@@ -188,7 +205,7 @@ function LeadCard({ row, onOpen }: { row: QueueRow; onOpen: () => void }) {
         <span className="min-w-0">
           <span className="block truncate text-base font-semibold">{row.name}</span>
           <span className="block truncate text-sm text-muted">{vehicle || "Vehicle details not provided"}</span>
-          <span className="block text-sm text-muted">{row.reg_no} · {row.phone}</span>
+          <span className="block text-sm text-muted">{row.reg_no ? `${row.reg_no} · ` : ""}{row.phone}</span>
         </span>
         <span className="flex shrink-0 flex-col items-end gap-1">
           <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${STATUS_STYLE[row.status]}`}>
