@@ -76,13 +76,9 @@ You need three free accounts: **GitHub** (your code is already there), **Supabas
 > **Free tier warning.** Supabase pauses free projects after about a week of no activity, and free projects have no
 > daily backups. For real use, put the Supabase project on the **Pro** plan before go-live.
 
-## 1. Get the code onto the branch Vercel will deploy
+## 1. The code
 
-The repository is `vikashaggarwal/policyaidapp`, and the app lives in the **`dialdesk/`** folder (the repo also holds
-an unrelated project, which is untouched). The work is on branch `claude/friendly-tesla-5racvt`.
-
-Either **merge it to `main`** (GitHub → Pull requests → New pull request → base `main`, compare
-`claude/friendly-tesla-5racvt` → Create → Merge), or tell Vercel in step 6 to deploy that branch. Merging is tidier.
+The repository is `vikashaggarwal/policyaidcrm`, and the app is at the top level of it. Vercel deploys the `main` branch.
 
 ## 2. Create the Supabase project
 
@@ -94,7 +90,7 @@ Either **merge it to `main`** (GitHub → Pull requests → New pull request →
 ## 3. Create the database (one paste)
 
 1. In Supabase open **SQL Editor → New query**.
-2. On GitHub open `dialdesk/supabase/bundle.sql`, click **Copy raw file**, paste it into the editor, press **Run**.
+2. On GitHub open `supabase/bundle.sql`, click **Copy raw file**, paste it into the editor, press **Run**.
 3. You should see "Success. No rows returned". If you see a red error, stop and send it to me. Do not run it twice.
 4. Check: **Table Editor** should list `audit_log`, `call_logs`, `leads`, `profiles`, `upload_batches`, each marked with RLS enabled.
 
@@ -124,8 +120,8 @@ sent**, and you don't need a mailbox. Choose it once and never change it afterwa
 
 ## 6. Deploy on Vercel
 
-1. vercel.com → **Add New… → Project → Import Git Repository** → pick `policyaidapp`.
-2. **Root Directory → Edit → choose `dialdesk`.** (Without this the build fails.) Framework should show *Next.js*.
+1. vercel.com → **Add New… → Project → Import Git Repository** → pick `policyaidcrm`.
+2. Leave **Root Directory** as it is (the app is at the top of the repository). Framework should show *Next.js*.
 3. Open **Environment Variables** and add all four:
 
    | Name | Value |
@@ -135,8 +131,7 @@ sent**, and you don't need a mailbox. Choose it once and never change it afterwa
    | `SUPABASE_SERVICE_ROLE_KEY` | your secret key |
    | `NEXT_PUBLIC_LOGIN_DOMAIN` | your login domain, e.g. `yourcompany.in` |
 
-4. If you did not merge to `main`: **Settings → Git → Production Branch** → `claude/friendly-tesla-5racvt`.
-5. Press **Deploy**. When it finishes you get an address like `https://policyaidapp-xyz.vercel.app`.
+4. Press **Deploy**. When it finishes you get an address like `https://policyaidcrm-xyz.vercel.app`.
 
 Variables beginning `NEXT_PUBLIC_` are baked in at build time, so if you ever change one, **Redeploy**.
 
@@ -144,7 +139,7 @@ Variables beginning `NEXT_PUBLIC_` are baked in at build time, so if you ever ch
 
 1. Supabase → **Authentication → Users → Add user → Create new user**: email `admin@yourcompany.in`
    (your login domain), a strong password, and tick **Auto Confirm User**.
-2. SQL Editor → paste `dialdesk/supabase/bootstrap-admin.sql`, change `YOUR-LOGIN-DOMAIN` to your domain, **Run**.
+2. SQL Editor → paste `supabase/bootstrap-admin.sql`, change `YOUR-LOGIN-DOMAIN` to your domain, **Run**.
    The final query should show one row: `admin | admin | true`.
 3. Open your Vercel address and sign in with login ID **`admin`** and that password.
 
@@ -154,7 +149,7 @@ resets go through the admin.
 
 ## 8. (Optional) Try it with fake data
 
-Paste `dialdesk/supabase/seed-demo.sql` into the SQL Editor and run it. It adds 20 clearly fake leads (mobile numbers
+Paste `supabase/seed-demo.sql` into the SQL Editor and run it. It adds 20 clearly fake leads (mobile numbers
 `9800000101`–`9800000120`). Create a demo caller in Users, then use **Leads → Reassign** to give the leads to them.
 Delete the demo leads before go-live.
 
@@ -233,7 +228,6 @@ create index leads_policy_expiry_idx on public.leads (policy_expiry);
 ## For developers
 
 ```bash
-cd dialdesk
 npm install
 npm test            # 190+ tests, including the database access rules on a real in-memory Postgres
 npm run lint && npx tsc --noEmit
