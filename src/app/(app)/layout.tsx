@@ -29,7 +29,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         </div>
         <NavLinks links={links} />
       </header>
-      <main className="flex-1 px-4 py-5">{children}</main>
+      <main id="main" tabIndex={-1} className="flex-1 px-4 py-5 outline-none">{children}</main>
     </div>
   );
 }

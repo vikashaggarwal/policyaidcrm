@@ -96,6 +96,7 @@ export function QueueClient({
 
   return (
     <div className="space-y-4">
+      <h1 className="sr-only">Your call queue</h1>
       <div className="flex gap-2">
         <div className="min-w-0 flex-1">
           <label htmlFor="q" className="sr-only">Search leads</label>
@@ -118,7 +119,7 @@ export function QueueClient({
           >
             {f.label}
             <span className={`rounded-full px-2 py-0.5 text-xs ${
-              f.value === "due" && counts.due > 0 && filter !== "due" ? "bg-danger-bg text-danger" : "bg-black/10 dark:bg-white/15"
+              f.value === "due" && counts.due > 0 && filter !== "due" ? "bg-danger-bg text-danger" : "bg-black/10"
             }`}>
               {counts[f.value].toLocaleString("en-IN")}
             </span>

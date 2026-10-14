@@ -15,7 +15,7 @@ export default async function LoginPage({
   const { reason } = await searchParams;
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-sm flex-col justify-center px-4 py-10">
+    <main id="main" className="mx-auto flex min-h-dvh w-full max-w-sm flex-col justify-center px-4 py-10">
       <h1 className="text-2xl font-bold">Dial Desk</h1>
       <p className="mt-1 text-muted">Sign in with the login ID your admin gave you.</p>
       {reason === "signed_out" && (

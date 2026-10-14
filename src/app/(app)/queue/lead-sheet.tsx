@@ -267,6 +267,7 @@ function Details({ lead }: { lead: LeadDetail }) {
     ["City", lead.city],
   ];
   return (
+    <>
     <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
       {items.map(([k, v]) => (
         <div key={k} className={k === "Address" ? "col-span-2" : ""}>
@@ -274,7 +275,8 @@ function Details({ lead }: { lead: LeadDetail }) {
           <dd className="break-words font-medium">{v === null || v === "" ? "—" : v}</dd>
         </div>
       ))}
-      <div className="col-span-2 flex flex-wrap items-center gap-2 border-t border-line pt-3">
+    </dl>
+      <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-line pt-3 text-sm">
         <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${STATUS_STYLE[lead.status]}`}>{STATUS_LABEL[lead.status]}</span>
         <span className="text-muted">
           {lead.attempts} {lead.attempts === 1 ? "call" : "calls"}
@@ -282,6 +284,6 @@ function Details({ lead }: { lead: LeadDetail }) {
           {lead.callback_at ? ` · call back ${formatIst(lead.callback_at)}` : ""}
         </span>
       </div>
-    </dl>
+    </>
   );
 }
