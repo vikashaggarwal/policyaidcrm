@@ -5,9 +5,9 @@ import "./globals.css";
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: { default: "Dial Desk", template: "%s · Dial Desk" },
+  title: { default: "PolicyAid CRM", template: "%s · PolicyAid CRM" },
   description: "Call queue and pipeline for the tele-sales team.",
-  applicationName: "Dial Desk",
+  applicationName: "PolicyAid CRM",
   robots: { index: false, follow: false },
 };
 

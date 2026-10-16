@@ -57,7 +57,7 @@ async function downloadTemplate() {
   XLSX.utils.book_append_sheet(wb, ws, "Leads");
   XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(notes), "Read me");
   const bytes = XLSX.write(wb, { type: "array", bookType: "xlsx" }) as ArrayBuffer;
-  download("dialdesk-lead-template.xlsx", new Blob([bytes], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }));
+  download("policyaid-lead-template.xlsx", new Blob([bytes], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }));
 }
 
 export function UploadClient({ callers }: { callers: CallerRef[] }) {

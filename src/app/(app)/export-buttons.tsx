@@ -19,7 +19,7 @@ export function ExportButtons({ kind, params, label }: { kind: "leads" | "call-l
         return;
       }
       const blob = await res.blob();
-      const name = /filename="([^"]+)"/.exec(res.headers.get("content-disposition") ?? "")?.[1] ?? `dialdesk-${kind}.${format}`;
+      const name = /filename="([^"]+)"/.exec(res.headers.get("content-disposition") ?? "")?.[1] ?? `policyaid-${kind}.${format}`;
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url; a.download = name; a.click();

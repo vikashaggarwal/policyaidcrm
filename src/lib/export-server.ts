@@ -29,7 +29,7 @@ export function fileResponse<T>(
   kind: "leads" | "call-logs", format: "csv" | "xlsx", columns: Column<T>[], rows: T[],
 ) {
   const stamp = istDay(new Date());
-  const name = `dialdesk-${kind}-${stamp}.${format}`;
+  const name = `policyaid-${kind}-${stamp}.${format}`;
   const body = format === "csv" ? toCsv(columns, rows) : toXlsx(kind === "leads" ? "Leads" : "Call logs", columns, rows);
   return new Response(body as BodyInit, {
     headers: {

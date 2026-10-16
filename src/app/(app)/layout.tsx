@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { requireProfile } from "@/lib/auth";
 import { signOut } from "./actions";
 import { NavLinks } from "./nav-links";
@@ -19,7 +20,10 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     <div className="mx-auto flex min-h-dvh w-full max-w-5xl flex-col">
       <header className="sticky top-0 z-10 border-b border-line bg-surface/95 px-4 backdrop-blur">
         <div className="flex h-14 items-center justify-between gap-3">
-          <span className="font-bold">Dial Desk</span>
+          <span className="flex shrink-0 items-center gap-2 font-bold">
+            <Image src="/brand/policyaid-logo-256.png" alt="" width={32} height={32} className="size-8" />
+            PolicyAid CRM
+          </span>
           <div className="flex min-w-0 items-center gap-3">
             <span className="truncate text-sm text-muted">{profile.full_name}</span>
             <form action={signOut}>

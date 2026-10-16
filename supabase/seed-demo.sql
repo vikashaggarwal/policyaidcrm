@@ -1,4 +1,4 @@
--- Dial Desk: 20 clearly fake demo leads (mobile numbers 9800000101 to 9800000120) for trying the system.
+-- PolicyAid CRM: 20 clearly fake demo leads (mobile numbers 9800000101 to 9800000120) for trying the system.
 -- Optional. They are unassigned, so use Leads > Reassign to hand them to callers and see the queue work.
 -- Safe to run twice. Delete them before go-live (Leads > filter "DEMO" > select all > Delete, as admin).
 

@@ -1,4 +1,4 @@
-# Dial Desk
+# PolicyAid CRM
 
 A web-based CRM for an outbound tele-sales team selling motor insurance renewals in India.
 A manager uploads leads from Excel or CSV, telecallers work a ranked call queue from their phones,
@@ -56,7 +56,7 @@ hold even if someone calls the API directly.
 ## Compliance, before you load a single number
 
 > **Check every number against the NDNC (National Do Not Call) registry before uploading.**
-> Dial Desk records a do-not-call outcome from each conversation, but it does **not** know which numbers are on
+> PolicyAid CRM records a do-not-call outcome from each conversation, but it does **not** know which numbers are on
 > the national registry. Telemarketing to registered numbers is a regulatory breach (TRAI's telecom commercial
 > communications rules). Scrub files first, using your telecom provider's or a registered scrubbing service's tool.
 
@@ -82,7 +82,7 @@ The repository is `vikashaggarwal/policyaidcrm`, and the app is at the top level
 
 ## 2. Create the Supabase project
 
-1. supabase.com → **New project**. Name it `dial-desk`.
+1. supabase.com → **New project**. Name it `policyaid-crm`.
 2. **Region: South Asia (Mumbai)**: fastest for your team and keeps data in India.
 3. Set a strong **database password** and save it in your password manager. You will not need it for the app.
 4. Wait about two minutes for the project to start.
@@ -115,7 +115,7 @@ all protections: it is used in exactly one place (the admin's user-management sc
 fails if anyone tries to use it in browser code. **Never paste it into chat, email or the repo.**
 
 You also choose a **login domain**: any domain you own, e.g. `yourcompany.in`. People type a short login ID like
-`caller07`; Supabase needs an email, so Dial Desk uses `caller07@yourcompany.in` behind the scenes. **No email is ever
+`caller07`; Supabase needs an email, so PolicyAid CRM uses `caller07@yourcompany.in` behind the scenes. **No email is ever
 sent**, and you don't need a mailbox. Choose it once and never change it afterwards.
 
 ## 6. Deploy on Vercel
@@ -143,7 +143,7 @@ Variables beginning `NEXT_PUBLIC_` are baked in at build time, so if you ever ch
    The final query should show one row: `admin | admin | true`.
 3. Open your Vercel address and sign in with login ID **`admin`** and that password.
 
-From here, everything happens inside Dial Desk: **Users → Add a user** creates managers and callers with a login ID
+From here, everything happens inside PolicyAid CRM: **Users → Add a user** creates managers and callers with a login ID
 and password. **Reset password** and **Switch off** are on the same page. There is no "forgot password" email, so
 resets go through the admin.
 
@@ -158,7 +158,7 @@ Delete the demo leads before go-live.
 Do these on the live address, in order. Tick each one. Anything that fails: stop and tell me which.
 
 **Sign-in and roles**
-- [ ] The address loads over `https://` and shows the Dial Desk sign-in page.
+- [ ] The address loads over `https://` and shows the PolicyAid CRM sign-in page.
 - [ ] Wrong password → plain message "That login ID or password isn't right". No technical text.
 - [ ] Admin signs in and lands on the Dashboard. Nav shows Dashboard · Leads · Audit · Users.
 - [ ] Users → add a **manager** (`manager1`) and a **caller** (`caller01`) with passwords.
