@@ -7,6 +7,7 @@ export type LeadStatus =
   | "interested"
   | "sold"
   | "not_interested"
+  | "wrong_number"
   | "do_not_call";
 
 export type Profile = {

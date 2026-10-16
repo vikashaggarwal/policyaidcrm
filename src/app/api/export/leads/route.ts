@@ -4,7 +4,7 @@ import { friendlyError } from "@/lib/errors";
 import { leadColumns, type LeadRow } from "@/lib/export";
 import { callerNameMap, fileResponse, jsonError, MAX_LEAD_ROWS, PAGE, staffOrError } from "@/lib/export-server";
 
-const STATUSES = ["any", "new", "no_answer", "callback", "interested", "sold", "not_interested", "do_not_call"] as const;
+const STATUSES = ["any", "new", "no_answer", "callback", "interested", "sold", "not_interested", "wrong_number", "do_not_call"] as const;
 const query = z.object({
   format: z.enum(["csv", "xlsx"]),
   assigned: z.string().max(40).default("any"),

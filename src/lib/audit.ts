@@ -4,11 +4,11 @@ export type AuditEntry = {
 };
 
 export const AUDIT_GROUPS: { value: string; label: string; actions: string[] }[] = [
-  { value: "upload", label: "Uploads and new leads", actions: ["upload", "add_lead"] },
+  { value: "upload", label: "Uploads, new leads and edits", actions: ["upload", "add_lead", "edit_lead"] },
   { value: "reassign", label: "Reassignments", actions: ["reassign", "reassign_unworked"] },
   { value: "delete", label: "Deletions", actions: ["delete_lead"] },
   { value: "export", label: "Exports", actions: ["export"] },
-  { value: "dnd", label: "Do not call", actions: ["do_not_call", "unblock_dnd"] },
+  { value: "dnd", label: "Do not call and wrong numbers", actions: ["do_not_call", "unblock_dnd", "wrong_number", "reopen_leads"] },
   { value: "user", label: "User changes", actions: ["user_create", "user_reset_password", "user_activate", "user_deactivate", "user_role_change"] },
 ];
 
@@ -28,12 +28,20 @@ export function describeAudit(e: AuditEntry, names: Map<string, string>): string
       return `Moved ${n(d.count)} unworked ${Number(d.count) === 1 ? "lead" : "leads"} from ${who(d.from)} to ${who(d.to)}`;
     case "add_lead":
       return `Added a lead${s(d.reg_no) ? ` (${s(d.reg_no)})` : ""}`;
+    case "edit_lead": {
+      const fields = Object.keys((d.changes as Record<string, unknown> | undefined) ?? {}).map((k) => k.replace(/_/g, " "));
+      return `Edited ${s(d.reg_no) || "a lead"}${fields.length ? `: ${fields.join(", ")}` : ""}`;
+    }
     case "delete_lead":
       return `Deleted lead ${s(d.reg_no) || e.entity_id}`;
     case "export":
       return `Exported ${n(d.rows)} ${e.entity_id === "call_logs" ? "call log rows" : "leads"} as ${s(d.format).toUpperCase()}`;
     case "do_not_call":
       return `Marked ${s(d.reg_no) || "a lead"} do-not-call`;
+    case "wrong_number":
+      return `Marked ${s(d.reg_no) || "a lead"} as a wrong number`;
+    case "reopen_leads":
+      return `Reopened ${n(d.count)} wrong-number ${Number(d.count) === 1 ? "lead" : "leads"}`;
     case "unblock_dnd":
       return `Lifted do-not-call on ${s(d.reg_no) || "a lead"}`;
     case "user_create":

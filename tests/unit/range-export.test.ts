@@ -59,7 +59,7 @@ const lead = (o: Partial<LeadRow> = {}): LeadRow => ({
   id: "1", state: "MAHARASHTRA", reg_no: "MH12AB0001", rto_code: "MH12", reg_date: "2026-09-10", name: "Demo, \"Owner\"",
   guardian_name: null, address: "1 Street\nPune", engine_no: null, chassis_no: "1234567890123456789", vehicle_make: "HONDA",
   vehicle_model: "ACTIVA", vehicle_class: null, fuel: "PETROL", sale_amount: 85000, seat_capacity: 2, phone: "9800000101",
-  city: null, product: "Motor renewal", source: null, policy_expiry: "2026-09-15", assigned_to: "c1", status: "callback",
+  city: null, product: "Motor renewal", source: null, renewal_date: "2026-09-15", assigned_to: "c1", status: "callback",
   callback_at: "2026-10-16T04:30:00.000Z", attempts: 2, last_called_at: null, dnd: false, created_at: "2026-10-01T00:00:00.000Z", ...o,
 });
 

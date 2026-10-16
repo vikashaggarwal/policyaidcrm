@@ -33,10 +33,13 @@ hold even if someone calls the API directly.
 
 - **One lead = one vehicle.** The registration number identifies a lead. An owner with two vehicles on one
   mobile number appears as two leads, and the caller sees a "this owner has N other vehicles" note.
-- **Policy expiry = registration date + 5 days.** This is the rule you specified. To change it, see
-  [Changing the expiry rule](#changing-the-expiry-rule).
+- **Renewal date defaults to registration date + 5 days.** This is the rule you specified; callers can correct a renewal date, and an upload can supply one. To change it, see
+  [Changing the renewal-date rule](#changing-the-renewal-date-rule).
 - **Do not call is permanent.** It blocks that mobile number across *every* vehicle, removes it from all queues,
   and only an admin can lift it (audited). Callers cannot add a number that is on the list.
+- **Wrong number** removes a lead from the caller's queue too (after a confirmation), but it is not a legal
+  do-not-call: the number can still be loaded again once corrected. Other unworked leads on the same number are
+  closed with it. A manager or admin can **Reopen** wrong-number leads from the Leads screen.
 - **Call history can never be edited or deleted**, by anyone, including admins. The only way a call record
   disappears is when an admin deletes the whole lead, and that is audited.
 - **Saving a call is one transaction:** the history row and the lead update succeed or fail together.
@@ -211,19 +214,27 @@ Do these on the live address, in order. Tick each one. Anything that fails: stop
 - **Backups:** Supabase Pro keeps daily backups. Export leads and call logs regularly if you want your own copy.
 - **Changing a key:** if a secret key is ever exposed, Supabase → API Keys → rotate it, update `SUPABASE_SERVICE_ROLE_KEY` in Vercel and Redeploy.
 
-## Changing the expiry rule
+## Changing the renewal-date rule
 
-Policy expiry is a stored, calculated column. To change "+5 days" to another number of days, run this in the SQL
-Editor (replace `5` with the new number of days):
+The renewal date is a normal column. When a lead has a registration date but no renewal date, a database trigger
+sets it to registration date + 5 days. To use a different number of days, run this in the SQL Editor
+(replace `5` with your number):
 
 ```sql
-drop index if exists public.leads_policy_expiry_idx;
-alter table public.leads drop column policy_expiry;
-alter table public.leads add column policy_expiry date generated always as (reg_date + 5) stored;
-create index leads_policy_expiry_idx on public.leads (policy_expiry);
+create or replace function public.set_renewal_date()
+returns trigger language plpgsql as $$
+begin
+  if tg_op = 'INSERT' then
+    if new.renewal_date is null and new.reg_date is not null then new.renewal_date := new.reg_date + 5; end if;
+  elsif new.reg_date is distinct from old.reg_date and new.reg_date is not null
+        and new.renewal_date is not distinct from old.renewal_date
+        and coalesce(current_setting('app.renewal_explicit', true), '') <> '1' then
+    new.renewal_date := new.reg_date + 5;
+  end if;
+  return new;
+end $$;
 ```
 
----
 
 ## For developers
 

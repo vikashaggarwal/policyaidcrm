@@ -80,8 +80,8 @@ beforeAll(async () => {
 const leadId = async (reg: string) => (await q("select id from public.leads where reg_no = $1", [reg])).rows[0].id as string;
 
 describe("schema rules", () => {
-  it("derives policy expiry as registration date + 5 days", async () => {
-    const r = await q("select policy_expiry::text as e from public.leads where reg_no = 'MH01AA0001'");
+  it("defaults renewal date to registration date + 5 days", async () => {
+    const r = await q("select renewal_date::text as e from public.leads where reg_no = 'MH01AA0001'");
     expect(r.rows[0].e).toBe("2026-01-15");
   });
 

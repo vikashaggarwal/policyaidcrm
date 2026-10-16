@@ -5,7 +5,7 @@ import { STATUS_LABEL, STATUS_STYLE } from "@/lib/outcomes";
 import {
   FILTERS, PAGE_SIZE, type QueueCounts, type QueueFilter, type QueueRow,
 } from "@/lib/queue-types";
-import { describeCallback } from "@/lib/time";
+import { describeCallback, formatDate } from "@/lib/time";
 import { fetchCounts, fetchQueue } from "./api";
 import { AddLeadSheet } from "./add-lead-sheet";
 import { LeadSheet } from "./lead-sheet";
@@ -183,6 +183,7 @@ export function QueueClient({
         <LeadSheet
           row={selected}
           onClose={() => setSelected(null)}
+          onEdited={() => { setToast("Details updated."); void reload(filter, search, rows.length, false); }}
           onSaved={(message) => {
             setSelected(null);
             setToast(message);
@@ -207,6 +208,7 @@ function LeadCard({ row, onOpen }: { row: QueueRow; onOpen: () => void }) {
           <span className="block truncate text-base font-semibold">{row.name}</span>
           <span className="block truncate text-sm text-muted">{vehicle || "Vehicle details not provided"}</span>
           <span className="block text-sm text-muted">{row.reg_no ? `${row.reg_no} · ` : ""}{row.phone}</span>
+          {row.renewal_date && <span className="block text-sm text-muted">Renewal {formatDate(row.renewal_date)}</span>}
         </span>
         <span className="flex shrink-0 flex-col items-end gap-1">
           <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${STATUS_STYLE[row.status]}`}>

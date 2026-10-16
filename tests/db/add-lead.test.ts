@@ -60,7 +60,7 @@ describe("add_lead", () => {
       reg_no: "MH12AB1234", phone: "9876543211", rto_code: "MH12", engine_no: "ENG1", chassis_no: "CHS1",
       sale_amount: "85000.00", seat_capacity: 2, city: "Pune",
     });
-    expect(String(lead.policy_expiry)).toContain("2026"); // reg date + 5 days still derives
+    expect(String(lead.renewal_date)).toContain("2026"); // reg date + 5 days default
   });
 
   it("several leads without a registration number can coexist", async () => {

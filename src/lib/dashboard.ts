@@ -20,4 +20,4 @@ export function pct(part: number, whole: number): string {
   return `${(Math.round(v * 10) / 10).toLocaleString("en-IN", { maximumFractionDigits: 1 })}%`;
 }
 
-export const STATUS_ORDER: LeadStatus[] = ["new", "no_answer", "callback", "interested", "sold", "not_interested", "do_not_call"];
+export const STATUS_ORDER: LeadStatus[] = ["new", "no_answer", "callback", "interested", "sold", "not_interested", "wrong_number", "do_not_call"];

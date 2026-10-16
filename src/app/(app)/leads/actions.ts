@@ -10,7 +10,7 @@ type Fail = { ok: false; message: string };
 const fail = (message: string): Fail => ({ ok: false, message });
 const plural = (n: number, one: string, many: string) => `${n.toLocaleString("en-IN")} ${n === 1 ? one : many}`;
 
-const STATUSES = ["any", "new", "no_answer", "callback", "interested", "sold", "not_interested", "do_not_call"] as const;
+const STATUSES = ["any", "new", "no_answer", "callback", "interested", "sold", "not_interested", "wrong_number", "do_not_call"] as const;
 const filtersSchema = z.object({
   assigned: z.string().max(40),
   status: z.enum(STATUSES),
@@ -48,6 +48,26 @@ export async function reassignLeads(ids: unknown, to: unknown): Promise<{ ok: tr
   revalidatePath("/leads");
   revalidatePath("/dashboard");
   return { ok: true, message: `Reassigned ${plural(Number(data ?? 0), "lead", "leads")}.` };
+}
+
+/** Puts wrong-number leads back to "new" (a caller's mis-tap, or the number was corrected). Other leads are untouched. */
+export async function reopenLeads(ids: unknown): Promise<{ ok: true; message: string } | Fail> {
+  await requireProfile([...STAFF]);
+  const i = idsSchema.safeParse(ids);
+  if (!i.success) return fail(i.error.issues[0]?.message ?? "Select at least one lead first.");
+
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("reopen_leads", { p_lead_ids: i.data });
+  if (error) return fail(friendlyError(error));
+  revalidatePath("/leads");
+  revalidatePath("/dashboard");
+  const n = Number(data ?? 0);
+  return {
+    ok: true,
+    message: n === 0
+      ? "None of the selected leads were marked wrong number, so nothing changed."
+      : `Reopened ${plural(n, "lead", "leads")}. ${n === 1 ? "It is" : "They are"} back in the caller's queue as new.`,
+  };
 }
 
 export async function countUnworked(from: unknown): Promise<{ ok: true; count: number } | Fail> {

@@ -1,5 +1,5 @@
 export const LEAD_FIELDS = [
-  "state", "reg_no", "rto_code", "reg_date", "name", "guardian_name", "address",
+  "state", "reg_no", "rto_code", "reg_date", "renewal_date", "name", "guardian_name", "address",
   "engine_no", "chassis_no", "vehicle_make", "vehicle_model", "vehicle_class",
   "fuel", "sale_amount", "seat_capacity", "phone",
   "city", "product", "source", "assigned_to",
@@ -9,7 +9,7 @@ export type LeadField = (typeof LEAD_FIELDS)[number];
 export const REQUIRED_FIELDS: LeadField[] = ["phone", "name", "reg_no"];
 
 export const FIELD_LABELS: Record<LeadField, string> = {
-  state: "State", reg_no: "Registration no.", rto_code: "RTO code", reg_date: "Registration date",
+  state: "State", reg_no: "Registration no.", rto_code: "RTO code", reg_date: "Registration date", renewal_date: "Renewal date",
   name: "Owner name", guardian_name: "Owner (S/W/D)", address: "Address", engine_no: "Engine no.",
   chassis_no: "Chassis no.", vehicle_make: "Vehicle make", vehicle_model: "Model / variant",
   vehicle_class: "Vehicle class", fuel: "Fuel", sale_amount: "Sale amount", seat_capacity: "Seat capacity",
@@ -23,6 +23,7 @@ const ALIASES: Record<LeadField, string[]> = {
   guardian_name: ["ownerswd", "guardian", "guardianname", "fathername", "relativename", "swd", "sdw", "sonwifedaughterof"],
   reg_no: ["regno", "registrationno", "registrationnumber", "vehicleno", "vehiclenumber", "regnumber", "vehicleregno", "regnoofvehicle"],
   reg_date: ["regdate", "registrationdate", "dateofregistration", "dateofreg"],
+  renewal_date: ["renewaldate", "renewal", "renewalon", "policyexpiry", "policyexpirydate", "expirydate", "expiry", "duedate", "renewaldue"],
   rto_code: ["rtocode", "rto", "rtoname"],
   state: ["state", "statename"],
   address: ["address", "addr", "owneraddress", "fulladdress"],

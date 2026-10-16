@@ -4,12 +4,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRef, useState, useTransition } from "react";
 import { STATUS_LABEL, STATUS_STYLE } from "@/lib/outcomes";
+import { formatDate } from "@/lib/time";
 import type { LeadStatus } from "@/lib/types";
-import { deleteLeads, reassignLeads, selectAllMatching } from "./actions";
+import { deleteLeads, reassignLeads, reopenLeads, selectAllMatching } from "./actions";
 
 export type LeadItem = {
   id: string; name: string; phone: string; reg_no: string | null; vehicle_make: string | null; vehicle_model: string | null;
-  status: LeadStatus; assigned_name: string | null; dnd: boolean;
+  status: LeadStatus; assigned_name: string | null; dnd: boolean; renewal_date: string | null;
 };
 type Caller = { id: string; full_name: string; active: boolean };
 type Filters = { assigned: string; status: string; q: string; batch: null };
@@ -67,6 +68,14 @@ export function LeadsManager({
     });
   }
 
+  function reopen() {
+    start(async () => {
+      const res = await reopenLeads([...selected]);
+      setNotice({ ok: res.ok, text: res.message });
+      if (res.ok) { setSelected(new Set()); router.refresh(); }
+    });
+  }
+
   function doDelete() {
     confirm.current?.close();
     start(async () => {
@@ -104,6 +113,7 @@ export function LeadsManager({
                 <span className="block truncate font-semibold">{r.name}</span>
                 <span className="block truncate text-sm text-muted">{[r.vehicle_make, r.vehicle_model].filter(Boolean).join(" ") || "—"}</span>
                 <span className="block text-sm text-muted">{r.reg_no ? `${r.reg_no} · ` : ""}{r.phone}</span>
+                {r.renewal_date && <span className="block text-sm text-muted">Renewal {formatDate(r.renewal_date)}</span>}
               </span>
               <span className="flex shrink-0 flex-col items-end gap-1 text-right">
                 <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${STATUS_STYLE[r.status]}`}>{STATUS_LABEL[r.status]}</span>
@@ -143,6 +153,9 @@ export function LeadsManager({
           <div className="flex gap-2">
             <button type="button" className="btn btn-primary flex-1" disabled={pending || target === ""} onClick={reassign}>
               {pending ? "Working…" : "Reassign"}
+            </button>
+            <button type="button" className="btn" disabled={pending} onClick={reopen} title="Puts selected wrong-number leads back in the caller's queue">
+              Reopen
             </button>
             {isAdmin && (
               <button type="button" className="btn btn-danger" disabled={pending} onClick={() => confirm.current?.showModal()}>Delete</button>

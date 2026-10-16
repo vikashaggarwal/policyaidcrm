@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { OUTCOMES, STATUS_LABEL, STATUS_STYLE, type Outcome } from "@/lib/outcomes";
 import type { HistoryItem, LeadDetail, OtherVehicle, QueueRow } from "@/lib/queue-types";
 import { callbackPresets, formatDate, formatIst, isoToIstLocal, istLocalToIso } from "@/lib/time";
+import { EditDetails } from "./edit-details";
 import { fetchHistory, fetchLead, fetchOtherVehicles, saveCall } from "./api";
 
 const NOTE_MAX = 1000;
@@ -11,8 +12,8 @@ const NOTE_MAX = 1000;
 type Loaded = { lead: LeadDetail; history: HistoryItem[]; others: OtherVehicle[] };
 
 export function LeadSheet({
-  row, onClose, onSaved,
-}: { row: QueueRow; onClose: () => void; onSaved: (message: string) => void }) {
+  row, onClose, onSaved, onEdited,
+}: { row: QueueRow; onClose: () => void; onSaved: (message: string) => void; onEdited: () => void }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const [data, setData] = useState<Loaded | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -24,6 +25,7 @@ export function LeadSheet({
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [editing, setEditing] = useState(false);
   const locked = useRef(false);
 
   useEffect(() => {
@@ -44,14 +46,16 @@ export function LeadSheet({
 
   const needsCallback = outcome === "callback";
   const canHaveCallback = outcome === "callback" || outcome === "interested" || outcome === "no_answer";
-  const phoneOk = /^\d{10}$/.test(row.phone);
+  const phone = data?.lead.phone ?? row.phone; // follows a corrected number
+  const ownerName = data?.lead.name ?? row.name;
+  const phoneOk = /^\d{10}$/.test(phone);
 
   async function copyNumber() {
     try {
-      await navigator.clipboard.writeText(row.phone);
+      await navigator.clipboard.writeText(phone);
     } catch {
       const t = document.createElement("textarea");
-      t.value = row.phone; t.setAttribute("readonly", ""); t.style.position = "fixed"; t.style.opacity = "0";
+      t.value = phone; t.setAttribute("readonly", ""); t.style.position = "fixed"; t.style.opacity = "0";
       document.body.appendChild(t); t.select();
       try { document.execCommand("copy"); } catch { /* nothing more we can do */ }
       t.remove();
@@ -62,14 +66,14 @@ export function LeadSheet({
 
   function pickOutcome(o: Outcome) {
     setOutcome(o); setConfirmDnd(false); setSaveError(null);
-    if (o === "sold" || o === "not_interested" || o === "do_not_call") setCallbackLocal("");
+    if (o === "sold" || o === "not_interested" || o === "do_not_call" || o === "wrong_number") setCallbackLocal("");
   }
 
   async function save() {
     if (!outcome || locked.current) return;
     setSaveError(null);
 
-    if (outcome === "do_not_call" && !confirmDnd) { setConfirmDnd(true); return; }
+    if ((outcome === "do_not_call" || outcome === "wrong_number") && !confirmDnd) { setConfirmDnd(true); return; }
 
     let callbackIso: string | null = null;
     if (canHaveCallback && callbackLocal) {
@@ -102,7 +106,7 @@ export function LeadSheet({
     >
       <div className="flex items-start justify-between gap-3 border-b border-line p-4">
         <div className="min-w-0">
-          <h2 id="sheet-title" className="truncate text-lg font-bold">{row.name}</h2>
+          <h2 id="sheet-title" className="truncate text-lg font-bold">{ownerName}</h2>
           <p className="break-words text-sm text-muted">
             {[row.vehicle_make, row.vehicle_model, row.reg_no].filter(Boolean).join(" · ") || "No vehicle details yet"}
           </p>
@@ -113,10 +117,10 @@ export function LeadSheet({
       <div className="space-y-5 p-4">
         {/* Call */}
         <section aria-label="Call" className="space-y-3">
-          <p className="text-2xl font-bold tracking-wide" aria-label={`Mobile number ${row.phone.split("").join(" ")}`}>{row.phone}</p>
+          <p className="text-2xl font-bold tracking-wide" aria-label={`Mobile number ${phone.split("").join(" ")}`}>{phone}</p>
           <div className="grid grid-cols-2 gap-3">
             {phoneOk ? (
-              <a href={`tel:+91${row.phone}`} className="btn btn-primary flex items-center justify-center !min-h-14 text-lg">Call</a>
+              <a href={`tel:+91${phone}`} className="btn btn-primary flex items-center justify-center !min-h-14 text-lg">Call</a>
             ) : (
               <span className="btn flex items-center justify-center !min-h-14 opacity-60">No valid number</span>
             )}
@@ -145,9 +149,22 @@ export function LeadSheet({
           <h3 id="details-h" className="mb-2 font-semibold">Lead details</h3>
           {loadError && <p role="alert" className="rounded-lg bg-danger-bg px-3 py-2 text-sm text-danger">{loadError}</p>}
           {!data && !loadError && <div className="h-40 animate-pulse rounded-lg bg-line" aria-label="Loading details" />}
-          {lead && <Details lead={lead} />}
+          {lead && !editing && (
+            <>
+              <Details lead={lead} />
+              <button type="button" className="btn mt-3 !min-h-12 w-full" onClick={() => setEditing(true)}>Edit details</button>
+            </>
+          )}
+          {lead && editing && (
+            <EditDetails
+              lead={lead}
+              onCancel={() => setEditing(false)}
+              onSaved={(updated) => { setData((d) => (d ? { ...d, lead: updated } : d)); setEditing(false); onEdited(); }}
+            />
+          )}
         </section>
 
+        {!editing && <>
         {/* Outcome */}
         <section aria-labelledby="outcome-h">
           <h3 id="outcome-h" className="mb-2 font-semibold">How did the call go?</h3>
@@ -220,13 +237,20 @@ export function LeadSheet({
             </ol>
           )}
         </section>
+        </>}
       </div>
 
       {/* Save stays in reach while the sheet scrolls */}
-      <div className="sticky bottom-0 space-y-2 border-t border-line bg-surface p-4">
+      {!editing && <div className="sticky bottom-0 space-y-2 border-t border-line bg-surface p-4">
         {outcome === "do_not_call" && confirmDnd && (
           <p role="alert" className="rounded-lg bg-danger-bg px-3 py-2 text-sm text-danger">
             This permanently removes this number from every queue, including any other vehicles on it. Only an admin can undo it.
+          </p>
+        )}
+        {outcome === "wrong_number" && confirmDnd && (
+          <p role="alert" className="rounded-lg bg-warn-bg px-3 py-2 text-sm">
+            This removes the lead from your queue, along with any other vehicles on the same number that haven&apos;t been worked.
+            You can&apos;t undo it yourself; a manager can reopen it if the number is corrected.
           </p>
         )}
         {saveError && <p role="alert" className="rounded-lg bg-danger-bg px-3 py-2 text-sm text-danger">{saveError}</p>}
@@ -237,9 +261,10 @@ export function LeadSheet({
           {saving ? "Saving…"
             : !outcome ? "Choose an outcome to save"
             : outcome === "do_not_call" && confirmDnd ? "Yes, never call this number again"
+            : outcome === "wrong_number" && confirmDnd ? "Yes, this is a wrong number"
             : `Save: ${STATUS_LABEL[outcome]}`}
         </button>
-      </div>
+      </div>}
     </dialog>
   );
 }
@@ -252,7 +277,7 @@ function Details({ lead }: { lead: LeadDetail }) {
     ["Mobile", lead.phone],
     ["Reg. no", lead.reg_no],
     ["Reg. date", lead.reg_date ? formatDate(lead.reg_date) : null],
-    ["Policy expiry", lead.policy_expiry ? formatDate(lead.policy_expiry) : null],
+    ["Renewal date", lead.renewal_date ? formatDate(lead.renewal_date) : null],
     ["Make", lead.vehicle_make],
     ["Model / variant", lead.vehicle_model],
     ["Class", lead.vehicle_class],

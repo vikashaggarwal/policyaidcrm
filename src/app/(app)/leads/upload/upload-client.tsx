@@ -33,19 +33,20 @@ function download(filename: string, blob: Blob) {
 async function downloadTemplate() {
   const XLSX = await import("xlsx");
   const headers = [
-    "STATE", "REG NO", "RTO CODE", "REG DATE", "OWNER NAME", "OWNER(S/W/D)", "ADDRESS", "ENGINE NO",
+    "STATE", "REG NO", "RTO CODE", "REG DATE", "RENEWAL DATE", "OWNER NAME", "OWNER(S/W/D)", "ADDRESS", "ENGINE NO",
     "CHASIS NO", "VEHICLE MAKE", "VEHICLE MODEL VARIANT", "VEHICLE CLASS", "FUEL", "SALE AMOUNT",
     "SEAT CAPACITY", "MOBILE", "ASSIGNED TO",
   ];
   const sample = [
-    ["MAHARASHTRA", "MH12AB0001", "MH12", "15/01/2026", "SAMPLE OWNER ONE", "SAMPLE GUARDIAN", "1 Example Street, Pune", "ENG000001", "CHS000001", "HONDA", "ACTIVA 6G", "M-CYCLE/SCOOTER", "PETROL", 85000, 2, "9800000101", "caller01"],
-    ["DELHI", "DL01CD0002", "DL01", "20/01/2026", "SAMPLE OWNER TWO", "SAMPLE GUARDIAN", "2 Example Road, New Delhi", "ENG000002", "CHS000002", "HYUNDAI", "CRETA SX", "MOTOR CAR", "DIESEL", 1650000, 5, "9800000102", ""],
+    ["MAHARASHTRA", "MH12AB0001", "MH12", "15/01/2026", "20/09/2026", "SAMPLE OWNER ONE", "SAMPLE GUARDIAN", "1 Example Street, Pune", "ENG000001", "CHS000001", "HONDA", "ACTIVA 6G", "M-CYCLE/SCOOTER", "PETROL", 85000, 2, "9800000101", "caller01"],
+    ["DELHI", "DL01CD0002", "DL01", "20/01/2026", "", "SAMPLE OWNER TWO", "SAMPLE GUARDIAN", "2 Example Road, New Delhi", "ENG000002", "CHS000002", "HYUNDAI", "CRETA SX", "MOTOR CAR", "DIESEL", 1650000, 5, "9800000102", ""],
   ];
   const notes = [
     ["How to fill this sheet"],
     ["Required: REG NO, OWNER NAME, MOBILE. Everything else is optional."],
     ["MOBILE: 10 digits. +91, spaces and a leading 0 are fine."],
-    ["REG DATE: day first, e.g. 15/01/2026. Policy expiry is worked out as registration date + 5 days."],
+    ["REG DATE: day first, e.g. 15/01/2026."],
+    ["RENEWAL DATE: when the policy renews, day first. Leave blank and it is set to registration date + 5 days."],
     ["ASSIGNED TO: a caller's login ID or full name. Leave blank to assign later."],
     ["Only the first sheet is read. Delete the two sample rows before uploading."],
     ["Check numbers against the NDNC registry before uploading."],

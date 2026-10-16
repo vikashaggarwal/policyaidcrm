@@ -12,7 +12,7 @@ export type LeadRow = {
   name: string; guardian_name: string | null; address: string | null; engine_no: string | null;
   chassis_no: string | null; vehicle_make: string | null; vehicle_model: string | null;
   vehicle_class: string | null; fuel: string | null; sale_amount: number | null; seat_capacity: number | null;
-  phone: string; city: string | null; product: string; source: string | null; policy_expiry: string | null;
+  phone: string; city: string | null; product: string; source: string | null; renewal_date: string | null;
   assigned_to: string | null; status: LeadStatus; callback_at: string | null; attempts: number;
   last_called_at: string | null; dnd: boolean; created_at: string;
 };
@@ -40,7 +40,7 @@ export function leadColumns(callerNames: Map<string, string>): Column<LeadRow>[]
     { header: "CITY", value: (r) => r.city },
     { header: "PRODUCT", value: (r) => r.product },
     { header: "SOURCE", value: (r) => r.source },
-    { header: "POLICY EXPIRY", value: (r) => r.policy_expiry },
+    { header: "RENEWAL DATE", value: (r) => r.renewal_date },
     { header: "STATUS", value: (r) => STATUS_LABEL[r.status] },
     { header: "CALLBACK AT (IST)", value: (r) => istStamp(r.callback_at) },
     { header: "CALL ATTEMPTS", value: (r) => r.attempts },

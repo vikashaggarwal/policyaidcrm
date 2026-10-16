@@ -26,6 +26,7 @@ export type QueueRow = {
   callback_at: string | null;
   attempts: number;
   last_called_at: string | null;
+  renewal_date: string | null;
   bucket: number;
   total_count: number;
 };
@@ -46,7 +47,7 @@ export const toCounts = (row: Record<string, unknown> | null | undefined): Queue
 
 export type LeadDetail = {
   id: string; name: string; guardian_name: string | null; phone: string; reg_no: string | null;
-  reg_date: string | null; policy_expiry: string | null; state: string | null; rto_code: string | null;
+  reg_date: string | null; renewal_date: string | null; state: string | null; rto_code: string | null;
   address: string | null; city: string | null; engine_no: string | null; chassis_no: string | null;
   vehicle_make: string | null; vehicle_model: string | null; vehicle_class: string | null; fuel: string | null;
   sale_amount: number | null; seat_capacity: number | null; product: string; source: string | null;

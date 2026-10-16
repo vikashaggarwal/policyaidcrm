@@ -7,6 +7,7 @@ export const STATUS_LABEL: Record<LeadStatus, string> = {
   interested: "Interested",
   sold: "Sold",
   not_interested: "Not interested",
+  wrong_number: "Wrong number",
   do_not_call: "Do not call",
 };
 
@@ -18,6 +19,7 @@ export const STATUS_STYLE: Record<LeadStatus, string> = {
   interested: "bg-ok-bg text-ok",
   sold: "bg-ok-bg text-ok",
   not_interested: "bg-line text-muted",
+  wrong_number: "bg-warn-bg",
   do_not_call: "bg-danger-bg text-danger",
 };
 
@@ -30,5 +32,6 @@ export const OUTCOMES: { value: Outcome; label: string; hint: string }[] = [
   { value: "interested", label: "Interested", hint: "Wants a quote or to think" },
   { value: "sold", label: "Sold", hint: "Policy purchased" },
   { value: "not_interested", label: "Not interested", hint: "Declined" },
+  { value: "wrong_number", label: "Wrong number", hint: "The number doesn't reach this person" },
   { value: "do_not_call", label: "Do not call", hint: "Asked never to be called" },
 ];

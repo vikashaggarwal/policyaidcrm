@@ -12,7 +12,7 @@ import { UnworkedPanel } from "./unworked-panel";
 export const metadata: Metadata = { title: "Leads" };
 
 const PAGE_SIZE = 50;
-const STATUSES: LeadStatus[] = ["new", "no_answer", "callback", "interested", "sold", "not_interested", "do_not_call"];
+const STATUSES: LeadStatus[] = ["new", "no_answer", "callback", "interested", "sold", "not_interested", "wrong_number", "do_not_call"];
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 const when = new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata" });

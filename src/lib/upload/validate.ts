@@ -9,6 +9,7 @@ export type CleanLead = {
   reg_no: string;
   rto_code: string | null;
   reg_date: string | null;
+  renewal_date: string | null;
   name: string;
   guardian_name: string | null;
   address: string | null;
@@ -69,6 +70,13 @@ export function validateRow(raw: RawRecord): RowResult {
     if (!regDate) reasons.push("Registration date isn't a date we can read (use DD/MM/YYYY)");
   }
 
+  let renewalDate: string | null = null;
+  const rawRenewal = raw.renewal_date;
+  if (rawRenewal !== null && rawRenewal !== undefined && String(rawRenewal).trim() !== "") {
+    renewalDate = parseDate(rawRenewal);
+    if (!renewalDate) reasons.push("Renewal date isn't a date we can read (use DD/MM/YYYY)");
+  }
+
   if (reasons.length > 0 || !phone.ok || !name) return { ok: false, reasons };
 
   const sale = num(raw.sale_amount);
@@ -81,6 +89,7 @@ export function validateRow(raw: RawRecord): RowResult {
       reg_no: regNo,
       rto_code: text(raw.rto_code, 20)?.toUpperCase() ?? null,
       reg_date: regDate,
+      renewal_date: renewalDate,
       name,
       guardian_name: text(raw.guardian_name, 120),
       address: text(raw.address, 500),

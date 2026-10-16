@@ -51,6 +51,9 @@ describe("describeAudit", () => {
     [e("export", { rows: 25000, format: "xlsx" }, { entity_id: "leads" }), "Exported 25,000 leads as XLSX"],
     [e("export", { rows: 10, format: "csv" }, { entity_id: "call_logs" }), "Exported 10 call log rows as CSV"],
     [e("user_deactivate", {}, { entity_id: "c1" }), "Switched Asha Verma off"],
+    [e("wrong_number", { reg_no: "MH12AB0001" }), "Marked MH12AB0001 as a wrong number"],
+    [e("reopen_leads", { count: 1 }), "Reopened 1 wrong-number lead"],
+    [e("reopen_leads", { count: 4 }), "Reopened 4 wrong-number leads"],
     [e("something_new", {}), "something new"],
   ])("%#", (entry, text) => expect(describeAudit(entry, names)).toBe(text));
 });

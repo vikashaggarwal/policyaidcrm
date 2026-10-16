@@ -4,26 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import type { FieldErrors, NewLeadField, NewLeadForm } from "@/lib/new-lead";
 import type { QueueRow } from "@/lib/queue-types";
 import { addLead } from "./actions";
-
-type FieldDef = { name: NewLeadField; label: string; type?: string; inputMode?: "numeric" | "decimal" | "text" | "tel"; placeholder?: string; wide?: boolean };
-
-const MORE_FIELDS: FieldDef[] = [
-  { name: "guardian_name", label: "Owner (S/W/D)" },
-  { name: "reg_no", label: "Registration no.", placeholder: "MH12AB1234" },
-  { name: "reg_date", label: "Registration date", type: "date" },
-  { name: "vehicle_make", label: "Vehicle make", placeholder: "e.g. Honda" },
-  { name: "vehicle_model", label: "Model / variant", placeholder: "e.g. Activa 6G" },
-  { name: "vehicle_class", label: "Vehicle class" },
-  { name: "fuel", label: "Fuel" },
-  { name: "seat_capacity", label: "Seat capacity", inputMode: "numeric" },
-  { name: "sale_amount", label: "Sale amount (₹)", inputMode: "decimal" },
-  { name: "city", label: "City" },
-  { name: "state", label: "State" },
-  { name: "rto_code", label: "RTO code", placeholder: "MH12" },
-  { name: "engine_no", label: "Engine no." },
-  { name: "chassis_no", label: "Chassis no." },
-  { name: "address", label: "Address", wide: true },
-];
+import { DETAIL_FIELDS as MORE_FIELDS, type FieldDef } from "./lead-fields";
 
 export function AddLeadSheet({ onClose, onAdded }: { onClose: () => void; onAdded: (lead: QueueRow) => void }) {
   const dialog = useRef<HTMLDialogElement>(null);
