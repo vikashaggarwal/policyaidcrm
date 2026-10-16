@@ -7,7 +7,9 @@
   --border: #dde1e7;
   --text: #111827;
   --muted: #5b6472;
-  --primary: #0b5fd6;
+  /* PolicyAid teal, taken from the logo (#0392b2) and deepened so white text on it stays readable (4.8:1). */
+  --primary: #037c97;
+  --primary-hover: #02677e;
   --primary-text: #ffffff;
   --danger: #b42318;
   --danger-bg: #fdecea;
@@ -24,6 +26,7 @@
   --color-ink: var(--text);
   --color-muted: var(--muted);
   --color-primary: var(--primary);
+  --color-primary-deep: var(--primary-hover);
   --color-primary-ink: var(--primary-text);
   --color-danger: var(--danger);
   --color-danger-bg: var(--danger-bg);
@@ -49,6 +52,8 @@ body {
 /* Large, obvious tap targets and a visible keyboard focus ring everywhere. */
 button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
 :focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+/* The header is brand-coloured, so its focus outline has to be white to be seen. */
+header :focus-visible { outline-color: #ffffff; }
 
 .field {
   width: 100%;
@@ -73,6 +78,7 @@ button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
 }
 .btn:disabled { opacity: 0.55; cursor: not-allowed; }
 .btn-primary { background: var(--primary); color: var(--primary-text); border-color: transparent; }
+.btn-primary:hover:not(:disabled) { background: var(--primary-hover); }
 .btn-danger { color: var(--danger); }
 
 .card {

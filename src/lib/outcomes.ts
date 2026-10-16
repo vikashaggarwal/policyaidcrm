@@ -12,7 +12,7 @@ export const STATUS_LABEL: Record<LeadStatus, string> = {
 
 /** Colour is never the only signal: every badge also carries its label. */
 export const STATUS_STYLE: Record<LeadStatus, string> = {
-  new: "bg-primary/15 text-primary",
+  new: "bg-primary/15 text-primary-deep",
   no_answer: "bg-warn-bg",
   callback: "bg-warn-bg",
   interested: "bg-ok-bg text-ok",
