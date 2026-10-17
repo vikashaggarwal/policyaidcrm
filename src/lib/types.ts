@@ -3,6 +3,7 @@ export type Role = "admin" | "manager" | "caller";
 export type LeadStatus =
   | "new"
   | "no_answer"
+  | "message_sent"
   | "callback"
   | "interested"
   | "sold"

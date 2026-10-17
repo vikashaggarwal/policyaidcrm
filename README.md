@@ -40,6 +40,8 @@ hold even if someone calls the API directly.
 - **Wrong number** removes a lead from the caller's queue too (after a confirmation), but it is not a legal
   do-not-call: the number can still be loaded again once corrected. Other unworked leads on the same number are
   closed with it. A manager or admin can **Reopen** wrong-number leads from the Leads screen.
+- **Message sent** records a WhatsApp, SMS or email sent to the customer. The lead stays in the caller's queue (alongside
+  No answer) with an optional callback time, and it does not count as a connected call on the dashboard.
 - **Call history can never be edited or deleted**, by anyone, including admins. The only way a call record
   disappears is when an admin deletes the whole lead, and that is audited.
 - **Saving a call is one transaction:** the history row and the lead update succeed or fail together.

@@ -113,7 +113,7 @@ dialog.sheet::backdrop { background: rgb(0 0 0 / 0.5); }
 
 /* Pipeline chart colours. The legend always carries the label and number, so colour is never the only signal. */
 :root {
-  --s-new: #5b8def; --s-no_answer: #d99a00; --s-callback: #12a3b4; --s-interested: #8e5bd6;
+  --s-new: #5b8def; --s-no_answer: #d99a00; --s-message_sent: #5a6bd6; --s-callback: #12a3b4; --s-interested: #8e5bd6;
   --s-sold: #1a9d5a; --s-not_interested: #9aa1ad; --s-wrong_number: #b7791f; --s-do_not_call: #c0392b;
 }
 

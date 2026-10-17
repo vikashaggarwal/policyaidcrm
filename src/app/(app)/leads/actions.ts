@@ -10,7 +10,7 @@ type Fail = { ok: false; message: string };
 const fail = (message: string): Fail => ({ ok: false, message });
 const plural = (n: number, one: string, many: string) => `${n.toLocaleString("en-IN")} ${n === 1 ? one : many}`;
 
-const STATUSES = ["any", "new", "no_answer", "callback", "interested", "sold", "not_interested", "wrong_number", "do_not_call"] as const;
+const STATUSES = ["any", "new", "no_answer", "message_sent", "callback", "interested", "sold", "not_interested", "wrong_number", "do_not_call"] as const;
 const filtersSchema = z.object({
   assigned: z.string().max(40),
   status: z.enum(STATUSES),

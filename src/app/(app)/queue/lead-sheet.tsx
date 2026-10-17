@@ -45,7 +45,7 @@ export function LeadSheet({
   }, [row.id]);
 
   const needsCallback = outcome === "callback";
-  const canHaveCallback = outcome === "callback" || outcome === "interested" || outcome === "no_answer";
+  const canHaveCallback = outcome === "callback" || outcome === "interested" || outcome === "no_answer" || outcome === "message_sent";
   const phone = data?.lead.phone ?? row.phone; // follows a corrected number
   const ownerName = data?.lead.name ?? row.name;
   const phoneOk = /^\d{10}$/.test(phone);
